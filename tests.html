@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rift Chess — Tests</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; padding: 20px; background: #0b0e16; color: #e8ecf6; }
+    h1 { margin: 0 0 4px; font-size: 1.5rem; }
+    p { color: #9aa5c1; margin: 0 0 16px; }
+    #summary { font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; }
+    #summary.pass { color: #4ade80; } #summary.fail { color: #f87171; }
+    ol { padding-left: 1.6em; margin: 0; }
+    li { padding: 3px 0; }
+    li.pass::marker { color: #4ade80; } li.fail { color: #fecaca; }
+    .err { display: block; color: #f87171; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; margin: 2px 0 6px; white-space: pre-wrap; }
+    .ms { color: #6b7591; font-size: 0.85rem; }
+    a { color: #67e8f9; }
+  </style>
+</head>
+<body>
+  <h1>Rift Chess — automated tests</h1>
+  <p>These tests use the same rules.js, ai.js and game.js files as the game. <a href="index.html">Back to the game</a></p>
+  <div id="summary">Running…</div>
+  <ol id="results"></ol>
+  <script src="rules.js"></script>
+  <script src="ai.js"></script>
+  <script src="game.js"></script>
+  <script src="tests.js"></script>
+  <script>
+    (function () {
+      var list = document.getElementById('results'), summary = document.getElementById('summary');
+      var failed = 0, total = 0;
+      window.RiftTests.run(function (r) {
+        total++;
+        if (!r.ok) failed++;
+        var li = document.createElement('li');
+        li.className = r.ok ? 'pass' : 'fail';
+        li.textContent = (r.ok ? '✓ ' : '✗ ') + r.name + (r.note ? ' [' + r.note + ']' : '') + ' ';
+        var ms = document.createElement('span'); ms.className = 'ms'; ms.textContent = r.ms + ' ms'; li.appendChild(ms);
+        if (!r.ok) { var e = document.createElement('span'); e.className = 'err'; e.textContent = r.error; li.appendChild(e); }
+        list.appendChild(li);
+        summary.textContent = 'Running… ' + total + ' done';
+      }).then(function (results) {
+        summary.textContent = (results.length - failed) + ' / ' + results.length + ' tests passed';
+        summary.className = failed ? 'fail' : 'pass';
+        window.RiftTestResults = { total: results.length, failed: failed, results: results };
+      });
+    })();
+  </script>
+</body>
+</html>
